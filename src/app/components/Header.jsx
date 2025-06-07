@@ -7,6 +7,8 @@ import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
+import { dark, light } from '@clerk/themes';
 
 export default function Header() {
   const path = usePathname();
@@ -30,7 +32,7 @@ export default function Header() {
       setSearchTerm(searchTermFromUrl);
     }
   }, [searchParams]);
-  
+
   return (
     <Navbar className='border-b-2'>
       <Link
@@ -55,7 +57,9 @@ export default function Header() {
       <Button className='w-12 h-10 lg:hidden' color='gray' pill>
         <AiOutlineSearch />
       </Button>
+
       <div className='flex gap-2 md:order-2'>
+
         <Button
           className='w-12 h-10 hidden sm:inline'
           color='gray'
@@ -64,14 +68,36 @@ export default function Header() {
         >
           {theme === 'light' ? <FaSun /> : <FaMoon />}
         </Button>
-        <Link href='/sign-in'>
-          <Button gradientDuoTone='purpleToBlue' outline>
-            Sign In
-          </Button>
-        </Link>
+
+        <SignedIn>
+          <UserButton
+            appearance={{
+              baseTheme: theme === 'light' ? light : dark,
+              elements: {
+                avatarBox: "w-10 h-10",
+                card: theme === 'dark' ? "bg-gray-900 border-gray-800" : "",
+                userPreviewMainIdentifier: theme === 'dark' ? "text-white" : "",
+                userPreviewSecondaryIdentifier: theme === 'dark' ? "text-gray-300" : ""
+              }
+            }}
+            afterSignOutUrl="/"
+          />
+        </SignedIn>
+
+        <SignedOut>
+          <Link href='/sign-in'>
+            <Button gradientDuoTone='purpleToBlue' outline>
+              Sign In
+            </Button>
+          </Link>
+        </SignedOut>
+
+        {/* for mobile menu */}
         <Navbar.Toggle />
+
       </div>
-      <Navbar.Collapse>
+
+      <Navbar.Collapse >
         <Link href='/'>
           <Navbar.Link active={path === '/'} as={'div'}>
             Home

@@ -5,7 +5,7 @@ import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
 export default function ThemeCom({ children }) {
-  const { theme } = useTheme();
+  const { theme } = useTheme(); // This re-receives updated theme
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;

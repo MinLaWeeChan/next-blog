@@ -9,8 +9,23 @@
 //   }
 // });
 
-export const middleware = () => {}
+// export const middleware = () => {}
+
+// export const config = {
+//   matcher: []
+// };
+
+import { clerkMiddleware } from '@clerk/nextjs/server';
+
+export default clerkMiddleware();
 
 export const config = {
-  matcher: []
+  matcher: [
+    // Protected routes
+    '/dashboard/:path*',
+    '/api/:path*',
+    // Auth routes
+    '/sign-in/:path*',
+    '/sign-up/:path*',
+  ],
 };
