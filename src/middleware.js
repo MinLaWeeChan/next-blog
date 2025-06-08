@@ -1,20 +1,20 @@
-import { authMiddleware } from '@clerk/nextjs';
+// src/middleware.js
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
-export default authMiddleware({
-  publicRoutes: ['/api/webhooks(.*)'],
+export default clerkMiddleware({
+  publicRoutes: ["/api/webhooks(.*)"],
 });
 
 export const config = {
   matcher: [
-    // Protected routes
-    '/dashboard/:path*',
-    // Protected API routes (excluding webhooks)
-    '/(api(?!/webhooks).*)/:path*',
-    // Auth routes
-    '/sign-in/:path*',
-    '/sign-up/:path*',
+    "/dashboard/:path*",
+    "/(api(?!/webhooks).*)/:path*",
+    "/sign-in/:path*",
+    "/sign-up/:path*",
   ],
 };
+
+
 
 // export const middleware = () => {}
 
