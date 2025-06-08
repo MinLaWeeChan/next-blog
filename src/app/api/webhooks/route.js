@@ -105,62 +105,62 @@
 
 /////////
 
-// import { verifyWebhook } from '@clerk/nextjs/webhooks'
-// import { NextRequest } from 'next/server'
-
-// export async function POST(req) {
-//   try {
-//     const evt = await verifyWebhook(req)
-
-//     // Do something with payload
-//     // For this guide, log payload to console
-//     const { id } = evt.data
-//     const eventType = evt.type
-//     console.log(`Received webhook with ID ${id} and event type of ${eventType}`)
-//     console.log('Webhook payload:', evt.data)
-
-//     if (evt.type === 'user created') {
-//       console.log('userId:', evt.data.id);
-//     }
-//     if (evt.type === 'user.updated') {
-//       console.log('user is updated:', evt.data.id);
-//     }
-    
-//     return new Response('Webhook received', { status: 200 })
-//   } catch (err) {
-//     console.error('Error verifying webhook:', err)
-//     return new Response('Error verifying webhook', { status: 400 })
-//   }
-// }
-
-
-// app/api/webhooks/route.js
-import { verifyWebhook } from '@clerk/backend'
-import { NextResponse } from 'next/server'
+import { verifyWebhook } from '@clerk/nextjs/webhooks'
+import { NextRequest } from 'next/server'
 
 export async function POST(req) {
   try {
-    // Pass your secret explicitly (it’ll also pick it up from process.env)
-    const evt = await verifyWebhook(req, {
-      signingSecret: process.env.CLERK_WEBHOOK_SIGNING_SECRET
-    })
-    console.log('✅ Webhook verified:', evt.type, evt.data)
+    const evt = await verifyWebhook(req)
 
-    // Your business logic:
-    switch (evt.type) {
-      case 'user.created':
-        console.log('🆕 New user ID:', evt.data.id)
-        break
-      case 'user.updated':
-        console.log('🔄 Updated user ID:', evt.data.id)
-        break
-      default:
-        console.log('ℹ️ Unhandled event type:', evt.type)
+    // Do something with payload
+    // For this guide, log payload to console
+    const { id } = evt.data
+    const eventType = evt.type
+    console.log(`Received webhook with ID ${id} and event type of ${eventType}`)
+    console.log('Webhook payload:', evt.data)
+
+    if (evt.type === 'user created') {
+      console.log('userId:', evt.data.id);
     }
-
-    return NextResponse.json({ received: true })
+    if (evt.type === 'user.updated') {
+      console.log('user is updated:', evt.data.id);
+    }
+    
+    return new Response('Webhook received', { status: 200 })
   } catch (err) {
-    console.error('❌ Webhook verification failed:', err)
-    return new Response('Invalid signature', { status: 400 })
+    console.error('Error verifying webhook:', err)
+    return new Response('Error verifying webhook', { status: 400 })
   }
 }
+
+
+// app/api/webhooks/route.js
+// import { verifyWebhook } from '@clerk/backend'
+// import { NextResponse } from 'next/server'
+
+// export async function POST(req) {
+//   try {
+//     // Pass your secret explicitly (it’ll also pick it up from process.env)
+//     const evt = await verifyWebhook(req, {
+//       signingSecret: process.env.CLERK_WEBHOOK_SIGNING_SECRET
+//     })
+//     console.log('✅ Webhook verified:', evt.type, evt.data)
+
+//     // Your business logic:
+//     switch (evt.type) {
+//       case 'user.created':
+//         console.log('🆕 New user ID:', evt.data.id)
+//         break
+//       case 'user.updated':
+//         console.log('🔄 Updated user ID:', evt.data.id)
+//         break
+//       default:
+//         console.log('ℹ️ Unhandled event type:', evt.type)
+//     }
+
+//     return NextResponse.json({ received: true })
+//   } catch (err) {
+//     console.error('❌ Webhook verification failed:', err)
+//     return new Response('Invalid signature', { status: 400 })
+//   }
+// }
