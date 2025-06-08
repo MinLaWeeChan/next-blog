@@ -4,5 +4,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "exclude": ["src/app/components"]
+  "exclude": ["src/app/components", "src/app/post"]
 }
+
