@@ -135,22 +135,24 @@
 
 
 // app/api/webhooks/route.js
-import { verifyWebhook } from '@clerk/nextjs/server'
+import { verifyWebhook } from '@clerk/backend'
 import { NextResponse } from 'next/server'
 
-export async function POST(req) {        // ← no “: NextRequest” here
+export async function POST(req) {
   try {
+    // Pass your secret explicitly (it’ll also pick it up from process.env)
     const evt = await verifyWebhook(req, {
-      secret: process.env.CLERK_WEBHOOK_SIGNING_SECRET
+      signingSecret: process.env.CLERK_WEBHOOK_SIGNING_SECRET
     })
     console.log('✅ Webhook verified:', evt.type, evt.data)
-    
+
+    // Your business logic:
     switch (evt.type) {
       case 'user.created':
-        console.log('🆕 New user:', evt.data.id)
+        console.log('🆕 New user ID:', evt.data.id)
         break
       case 'user.updated':
-        console.log('🔄 Updated user:', evt.data.id)
+        console.log('🔄 Updated user ID:', evt.data.id)
         break
       default:
         console.log('ℹ️ Unhandled event type:', evt.type)
@@ -158,7 +160,7 @@ export async function POST(req) {        // ← no “: NextRequest” here
 
     return NextResponse.json({ received: true })
   } catch (err) {
-    console.error('❌ Verification failed:', err)
+    console.error('❌ Webhook verification failed:', err)
     return new Response('Invalid signature', { status: 400 })
   }
 }
