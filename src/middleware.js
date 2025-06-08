@@ -1,13 +1,20 @@
-// import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { authMiddleware } from '@clerk/nextjs';
 
-// const isProtectedRoute = createRouteMatcher(['/dashboard(.*)']);
+export default authMiddleware({
+  publicRoutes: ['/api/webhooks(.*)'],
+});
 
-// export default clerkMiddleware(async (auth, req) => {
-//   const { userId } = await auth();
-//   if (!userId && isProtectedRoute(req)) {
-//     return auth().redirectToSignIn();
-//   }
-// });
+export const config = {
+  matcher: [
+    // Protected routes
+    '/dashboard/:path*',
+    // Protected API routes (excluding webhooks)
+    '/(api(?!/webhooks).*)/:path*',
+    // Auth routes
+    '/sign-in/:path*',
+    '/sign-up/:path*',
+  ],
+};
 
 // export const middleware = () => {}
 
