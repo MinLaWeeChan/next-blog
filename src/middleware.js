@@ -2,15 +2,15 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
 export default clerkMiddleware({
-  publicRoutes: ["/api/webhooks(.*)"],
+  publicRoutes: ['/api/webhooks/(.*)'],
 });
 
 export const config = {
   matcher: [
-    "/dashboard/:path*",
-    "/(api(?!/webhooks).*)/:path*",
-    "/sign-in/:path*",
-    "/sign-up/:path*",
+    '/dashboard/:path*',
+    '/(api(?!/webhooks).*)/(.*)/',
+    '/sign-in/:path*',
+    '/sign-up/:path*',
   ],
 };
 
