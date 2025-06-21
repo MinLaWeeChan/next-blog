@@ -17,6 +17,7 @@ export async function POST(req) {
     if (eventType === 'user.created' || eventType === 'user.updated') {
       const { id, first_name, last_name, image_url, email_addresses, username } =
         evt?.data;
+      console.log('Processing user data:', { id, first_name, last_name, username });
       try {
         const user = await createOrUpdateUser(
           id,
@@ -26,14 +27,18 @@ export async function POST(req) {
           email_addresses,
           username
         );
+        console.log('User created/updated in MongoDB:', user);
+        
         if (user && eventType === 'user.created') {
+          console.log('Updating Clerk metadata for new user:', user._id);
           try {
-            await clerkClient.users.updateUser(id, {
+            const updatedUser = await clerkClient.users.updateUser(id, {
               publicMetadata: {
                 userMongoId: user._id,
                 isAdmin: user.isAdmin,
               },
             });
+            console.log('Clerk user updated successfully:', updatedUser);
           } catch (error) {
             console.log('Error updating user metadata:', error);
           }
@@ -63,4 +68,8 @@ export async function POST(req) {
     console.error('Error verifying webhook:', err)
     return new Response('Error verifying webhook', { status: 400 })
   }
+}
+
+export async function GET() {
+  return new Response('Webhook endpoint is working', { status: 200 })
 }
