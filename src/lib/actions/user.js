@@ -20,6 +20,52 @@ export const createOrUpdateUser = async (
       username
     });
     
+    // First, try to find a user with the same email
+    const existingUser = await User.findOne({ email: email_addresses[0].email_address });
+    
+    if (existingUser) {
+      console.log('Found existing user with same email:', existingUser);
+      
+      // If the existing user has a different clerkId, update it
+      if (existingUser.clerkId !== id) {
+        console.log('Updating existing user with new clerkId');
+        const updatedUser = await User.findByIdAndUpdate(
+          existingUser._id,
+          {
+            $set: {
+              clerkId: id,
+              firstName: first_name,
+              lastName: last_name,
+              profilePicture: image_url,
+              username,
+            },
+          },
+          { new: true }
+        );
+        console.log('User updated successfully:', updatedUser);
+        return updatedUser;
+      } else {
+        // Same clerkId, just update the user info
+        console.log('Updating existing user info');
+        const updatedUser = await User.findByIdAndUpdate(
+          existingUser._id,
+          {
+            $set: {
+              firstName: first_name,
+              lastName: last_name,
+              profilePicture: image_url,
+              username,
+            },
+          },
+          { new: true }
+        );
+        console.log('User updated successfully:', updatedUser);
+        return updatedUser;
+      }
+    }
+    
+    // No existing user found, create new one
+    console.log('Creating new user');
     const user = await User.findOneAndUpdate(
       { clerkId: id },
       {
