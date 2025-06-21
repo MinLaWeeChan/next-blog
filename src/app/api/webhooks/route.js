@@ -50,13 +50,28 @@ export async function POST(req) {
           console.log('clerkClient available:', !!clerkClient);
           console.log('clerkClient.users available:', !!clerkClient?.users);
           try {
-            const updatedUser = await clerkClient.users.updateUser(id, {
-              publicMetadata: {
-                userMongoId: user._id,
-                isAdmin: user.isAdmin,
+            // Use direct API call instead of clerkClient
+            const response = await fetch(`https://api.clerk.com/v1/users/${id}`, {
+              method: 'PATCH',
+              headers: {
+                'Authorization': `Bearer ${process.env.CLERK_SECRET_KEY}`,
+                'Content-Type': 'application/json',
               },
+              body: JSON.stringify({
+                public_metadata: {
+                  userMongoId: user._id,
+                  isAdmin: user.isAdmin,
+                },
+              }),
             });
-            console.log('Clerk metadata updated successfully:', updatedUser);
+            
+            if (response.ok) {
+              const updatedUser = await response.json();
+              console.log('Clerk metadata updated successfully:', updatedUser);
+            } else {
+              const errorData = await response.text();
+              console.log('Error response from Clerk API:', response.status, errorData);
+            }
           } catch (error) {
             console.log('Error updating Clerk metadata:', error);
           }
