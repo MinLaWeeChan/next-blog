@@ -5,7 +5,16 @@ import { clerkClient } from '@clerk/nextjs/server'
 
 export async function POST(req) {
   try {
+    console.log('Webhook received, attempting to verify...');
+    console.log('Environment check:', {
+      hasMongoUri: !!process.env.MONGODB_URI,
+      hasClerkSecret: !!process.env.CLERK_WEBHOOK_SECRET,
+      hasClerkPublishableKey: !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+      hasClerkSecretKey: !!process.env.CLERK_SECRET_KEY
+    });
+    
     const evt = await verifyWebhook(req)
+    console.log('Webhook verified successfully');
 
     // Do something with payload
     // For this guide, log payload to console
@@ -65,7 +74,12 @@ export async function POST(req) {
 
     return new Response('Webhook received', { status: 200 })
   } catch (err) {
-    console.error('Error verifying webhook:', err)
+    console.error('Error in webhook processing:', err);
+    console.error('Error details:', {
+      message: err.message,
+      stack: err.stack,
+      name: err.name
+    });
     return new Response('Error verifying webhook', { status: 400 })
   }
 }
