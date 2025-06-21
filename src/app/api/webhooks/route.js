@@ -1,7 +1,7 @@
 // app/api/webhooks/route.js
 import { createOrUpdateUser, deleteUser } from '@/lib/actions/user'
 import { verifyWebhook } from '@clerk/nextjs/webhooks'
-import { clerkClient } from '@clerk/nextjs/server'
+import { clerkClient } from '@clerk/backend'
 
 export async function POST(req) {
   try {
@@ -47,6 +47,8 @@ export async function POST(req) {
         
         if (user) {
           console.log('User created successfully, updating Clerk metadata...');
+          console.log('clerkClient available:', !!clerkClient);
+          console.log('clerkClient.users available:', !!clerkClient?.users);
           try {
             const updatedUser = await clerkClient.users.updateUser(id, {
               publicMetadata: {
