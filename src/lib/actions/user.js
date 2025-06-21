@@ -12,6 +12,14 @@ export const createOrUpdateUser = async (
 ) => {
   try {
     await connect();
+    console.log('Connected to MongoDB, creating/updating user with data:', {
+      clerkId: id,
+      firstName: first_name,
+      lastName: last_name,
+      email: email_addresses?.[0]?.email_address,
+      username
+    });
+    
     const user = await User.findOneAndUpdate(
       { clerkId: id },
       {
@@ -25,9 +33,12 @@ export const createOrUpdateUser = async (
       },
       { new: true, upsert: true }
     );
+    
+    console.log('User successfully created/updated:', user);
     return user;
   } catch (error) {
     console.log('Error creating or updating user:', error);
+    throw error; // Re-throw the error so the webhook can handle it
   }
 };
 
