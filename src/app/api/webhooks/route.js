@@ -1,6 +1,7 @@
 // app/api/webhooks/route.js
 import { createOrUpdateUser, deleteUser } from '@/lib/actions/user'
 import { verifyWebhook } from '@clerk/nextjs/webhooks'
+import { clerkClient } from '@clerk/nextjs/server'
 
 export async function POST(req) {
   try {
