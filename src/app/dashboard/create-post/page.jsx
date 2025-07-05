@@ -11,8 +11,26 @@ const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 // https://dev.to/a7u/reactquill-with-nextjs-478b
 import 'react-quill-new/dist/quill.snow.css';
 
+// Cloudinary upload function (keep this above the component)
+async function uploadImageToCloudinary(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'unsigned_preset'); // use your actual preset name
+
+  const response = await fetch(
+    'https://api.cloudinary.com/v1_1/dbuwqblex/image/upload',
+    {
+      method: 'POST',
+      body: formData,
+    }
+  );
+  const data = await response.json();
+  return data.secure_url; // This is the image URL
+}
+
 export default function CreatePostPage() {
   const { isSignedIn, user, isLoaded } = useUser();
+  const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(0);
   const [imageUploadError, setImageUploadError] = useState("");
   const [formData, setFormData] = useState({
@@ -21,6 +39,32 @@ export default function CreatePostPage() {
     image: "",
     content: ""
   });
+
+  // Move handleUploadImage inside the component
+  const handleUploadImage = async () => {
+    if (!file) {
+      setImageUploadError("Please select a file first.");
+      return;
+    }
+    setImageUploadProgress(30); // Optional: show progress
+    setImageUploadError("");
+
+    try {
+      const imageUrl = await uploadImageToCloudinary(file);
+      setFormData({ ...formData, image: imageUrl });
+      setImageUploadProgress(100);
+    } catch (err) {
+      setImageUploadError("Image upload failed.");
+      setImageUploadProgress(0);
+    }
+  };
+
+  // Move handleSubmit inside the component
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Your form submission logic here
+    console.log('Form data:', formData);
+  };
 
   // Show nothing until user data is fully loaded
   if (!isLoaded) {
@@ -61,14 +105,14 @@ export default function CreatePostPage() {
             <FileInput
               type='file'
               accept='image/*'
-              onChange={(e) => setFile(e.target.files[0])}
+              onChange={e => setFile(e.target.files[0])}
             />
             <Button
               type='button'
               gradientDuoTone='purpleToBlue'
               size='sm'
               outline
-              onClick={handleUpdloadImage}
+              onClick={handleUploadImage}
               disabled={imageUploadProgress}
             >
               {imageUploadProgress ? (
@@ -117,13 +161,4 @@ export default function CreatePostPage() {
       </h1>
     );
   }
-}
-
-function handleSubmit(e) {
-  e.preventDefault();
-  // Your form submission logic here
-}
-
-function handleUpdloadImage() {
-  // Your image upload logic here
 }
