@@ -5,6 +5,7 @@ import { TextInput, Select, FileInput, Button, Alert } from 'flowbite-react';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import dynamic from 'next/dynamic';
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
@@ -39,7 +40,10 @@ export default function CreatePostPage() {
     image: "",
     content: ""
   });
-
+  const [publishError, setPublishError] = useState(null);
+  const router = useRouter();
+  console.log(formData);
+  
   // Move handleUploadImage inside the component
   const handleUploadImage = async () => {
     if (!file) {
@@ -60,10 +64,31 @@ export default function CreatePostPage() {
   };
 
   // Move handleSubmit inside the component
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Your form submission logic here
-    console.log('Form data:', formData);
+    try {
+      const res = await fetch('/api/post/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          userMongoId: user.publicMetadata.userMongoId,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setPublishError(data.message);
+        return;
+      }
+      if (res.ok) {
+        setPublishError(null);
+        router.push(`/post/${data.slug}`);
+      }
+    } catch (error) {
+      setPublishError('Something went wrong');
+    }
   };
 
   // Show nothing until user data is fully loaded
