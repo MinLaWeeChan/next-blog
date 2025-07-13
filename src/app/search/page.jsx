@@ -33,7 +33,7 @@ export default function Search() {
     const fetchPosts = async () => {
       setLoading(true);
       const searchQuery = urlParams.toString();
-      const res = await fetch('/api/post/get', {
+      const res = await fetch('/api/post/search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ export default function Search() {
     const urlParams = new URLSearchParams(searchParams);
     urlParams.set('startIndex', startIndex);
     const searchQuery = urlParams.toString();
-    const res = await fetch('/api/post/get', {
+    const res = await fetch('/api/post/search', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

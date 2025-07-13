@@ -42,7 +42,7 @@ export default function DashboardComp() {
     };
     const fetchPosts = async () => {
       try {
-        const res = await fetch('/api/post/get', {
+        const res = await fetch('/api/post/search', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
