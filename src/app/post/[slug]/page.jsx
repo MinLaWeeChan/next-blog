@@ -1,6 +1,7 @@
 import CallToAction from '@/app/components/CallToAction';
 import { Button } from 'flowbite-react';
 import Link from 'next/link';
+import Image from 'next/image';
 export default async function PostPage({ params }) {
   const { slug } = await params;
   let post = null;
@@ -15,7 +16,7 @@ export default async function PostPage({ params }) {
   } catch (error) {
     post = { title: 'Failed to load post' };
   }
-  if (!post || !post.title === 'Failed to load post') {
+  if (!post || post.title === 'Failed to load post') {
     return (
       <main className='p-3 flex flex-col max-w-6xl mx-auto min-h-screen'>
         <h2 className='text-3xl mt-10 p-3 text-center font-serif max-w-2xl mx-auto lg:text-4xl'>
@@ -34,12 +35,14 @@ export default async function PostPage({ params }) {
         className='self-center mt-5'
       >
         <Button color='gray' pill size='xs'>
-          {post && post.category}
+          {post && post.category ? post.category : "Uncategorized"}
         </Button>
       </Link>
-      <img
+      <Image
         src={post && post.image}
         alt={post && post.title}
+        width={1200}
+        height={600}
         className='mt-10 p-3 max-h-[600px] w-full object-cover'
       />
       <div className='flex justify-between p-3 border-b border-slate-500 mx-auto w-full max-w-2xl text-xs'>
