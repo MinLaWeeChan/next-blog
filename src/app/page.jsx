@@ -31,7 +31,7 @@ export default function Home() {
         <CallToAction />
       </div>
       <div className='p-3 flex flex-col gap-8 py-7'>
-        <div className="text-center text-gray-500">Posts will appear here once configured</div>
+        <RecentPosts limit={4} />
         <Link
           href={'/search?category=null'}
           className='text-lg text-teal-500 hover:underline text-center'
