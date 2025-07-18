@@ -45,5 +45,6 @@ export const POST = async (req) => {
     });
   } catch (error) {
     console.log('Error getting posts:', error);
+    return new Response('Error getting posts', { status: 500 });
   }
 };
